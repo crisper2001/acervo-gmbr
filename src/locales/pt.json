@@ -1,0 +1,23 @@
+{
+  "searchPlaceholder": "Pesquisar por itens, criadores ou anos...",
+  "loading": "Carregando itens...",
+  "noResults": "Nenhum item encontrado para sua pesquisa.",
+  "playNow": "Baixar",
+  "downloadUnavailable": "Indisponível",
+  "sortAZ": "A-Z",
+  "sortZA": "Z-A",
+  "sortNewest": "Mais recentes",
+  "sortOldest": "Mais antigos",
+  "sortGradeAsc": "Melhor avaliados",
+  "sortGradeDesc": "Pior avaliados",
+  "author": "Autor",
+  "year": "Ano",
+  "forumLink": "Tópico no Fórum",
+  "footerDisclaimer": "Este site foi criado com a ajuda de IA generativa.",
+  "projectsFound": "Nenhum item encontrado | 1 item encontrado | {count} itens encontrados",
+  "tag": "Tag",
+  "project": "Projeto",
+  "engine": "Engine",
+  "themeDark": "Escuro",
+  "themeLight": "Claro"
+}
