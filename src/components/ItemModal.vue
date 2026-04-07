@@ -15,10 +15,10 @@
           <TransitionGroup :name="slideDirection" tag="div" class="carousel-container">
             <img v-for="(img, index) in imageSources" :key="img.id"
               v-show="!img.failed && validImages.indexOf(img) === currentImageIndex" :src="img.url" loading="lazy"
-              :alt="`${item.title} screenshot ${index + 1}`" class="gallery-image"
+              :alt="`${item.title} screenshot ${index + 1}`" :class="['gallery-image', { 'img-loaded': img.loaded }]"
               @load="img.loaded = true" @error="handleGalleryError(index, $event)" />
             <img v-if="!isChecking && validImages.length === 0" key="fallback-thumbnail" :src="item.thumbnail"
-              :alt="`${item.title} thumbnail`" class="gallery-image" 
+              :alt="`${item.title} thumbnail`" :class="['gallery-image', { 'img-loaded': fallbackLoaded }]" 
               @load="fallbackLoaded = true" @error="handleFallbackError" />
           </TransitionGroup>
 
@@ -295,6 +295,11 @@ const handleFallbackError = (e) => {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  color: transparent;
+}
+
+.gallery-image:not(.img-loaded) {
+  opacity: 0;
 }
 
 /* Slide animations */

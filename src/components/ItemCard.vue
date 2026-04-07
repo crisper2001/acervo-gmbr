@@ -2,7 +2,7 @@
   <div class="item-card" @click="$emit('open', item)">
     <div class="thumbnail-wrapper">
       <div v-if="!isLoaded" class="skeleton skeleton-overlay"></div>
-      <img :src="item.thumbnail" :alt="item.title" class="thumbnail" @load="isLoaded = true" @error="handleImageError" loading="lazy" />
+      <img :src="item.thumbnail" :alt="item.title" :class="['thumbnail', { 'img-loaded': isLoaded }]" @load="isLoaded = true" @error="handleImageError" loading="lazy" />
     </div>
     <div class="info">
       <div class="header">
@@ -103,6 +103,11 @@ const handleImageError = (e) => {
   height: 100%;
   object-fit: cover;
   display: block;
+  color: transparent;
+}
+
+.thumbnail:not(.img-loaded) {
+  opacity: 0;
 }
 
 .info {
