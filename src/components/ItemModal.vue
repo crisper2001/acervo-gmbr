@@ -97,7 +97,7 @@ const isChecking = ref(true);
 const imageSources = ref(
   Array.from({ length: 5 }, (_, i) => ({
     id: i,
-    url: `/projects/${props.item.name}/${i + 1}.png`,
+    url: `${import.meta.env.BASE_URL}projects/${props.item.name}/${i + 1}.png`,
     failed: false
   }))
 );

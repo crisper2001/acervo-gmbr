@@ -203,7 +203,7 @@ onMounted(async () => {
         ...rest,
         title,
         name,
-        thumbnail: `/thumbnails/${name}.png`
+        thumbnail: `${import.meta.env.BASE_URL}thumbnails/${name}.png`
       };
     });
     loading.value = false;
