@@ -57,6 +57,10 @@
             @search-year="setSearchQuery"
             @open="selectedItem = $event"
           />
+          <div v-for="n in (itemsPerPage - paginatedItems.length)" :key="'placeholder-' + n" class="item-placeholder" aria-hidden="true">
+            <div class="placeholder-thumb"></div>
+            <div class="placeholder-info"></div>
+          </div>
         </div>
       </template>
 
@@ -105,7 +109,7 @@ const sortBy = ref('grade-asc');
 const theme = ref(localStorage.getItem('theme') || 'light');
 const currentPage = ref(1);
 const selectedItem = ref(null);
-const itemsPerPage = 24;
+const itemsPerPage = 30;
 
 const { t, locale } = useI18n();
 
@@ -312,6 +316,23 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 2rem;
+}
+
+.item-placeholder {
+  visibility: hidden;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.placeholder-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.placeholder-info {
+  padding: 1rem;
+  min-height: 140px; /* Approximates the height of the item info block */
 }
 
 .search-container {
