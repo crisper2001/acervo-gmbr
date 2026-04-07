@@ -1,6 +1,9 @@
 <template>
   <div class="item-card" @click="$emit('open', item)">
-    <img :src="item.thumbnail" :alt="item.title" class="thumbnail" @error="handleImageError" loading="lazy" />
+    <div class="thumbnail-wrapper">
+      <div v-if="!isLoaded" class="skeleton skeleton-overlay"></div>
+      <img :src="item.thumbnail" :alt="item.title" class="thumbnail" @load="isLoaded = true" @error="handleImageError" loading="lazy" />
+    </div>
     <div class="info">
       <div class="header">
         <h3 class="title" :title="item.title">{{ item.title }}</h3>
@@ -38,7 +41,10 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { Icon } from '@iconify/vue';
+
+const isLoaded = ref(false);
 
 defineProps({
   item: {
@@ -80,11 +86,23 @@ const handleImageError = (e) => {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
+.thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.skeleton-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1;
+}
+
 .thumbnail {
   width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
+  height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .info {

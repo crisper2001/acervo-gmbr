@@ -5,6 +5,8 @@
 
       <div class="modal-body">
         <div class="image-gallery">
+          <div v-if="isLoadingCurrent" class="skeleton skeleton-fill"></div>
+
           <button v-if="!isChecking && validImages.length > 1" class="carousel-btn prev" @click="prevImage"
             :disabled="currentImageIndex === 0">
             &#10094;
@@ -14,9 +16,10 @@
             <img v-for="(img, index) in imageSources" :key="img.id"
               v-show="!img.failed && validImages.indexOf(img) === currentImageIndex" :src="img.url" loading="lazy"
               :alt="`${item.title} screenshot ${index + 1}`" class="gallery-image"
-              @error="handleGalleryError(index, $event)" />
+              @load="img.loaded = true" @error="handleGalleryError(index, $event)" />
             <img v-if="!isChecking && validImages.length === 0" key="fallback-thumbnail" :src="item.thumbnail"
-              :alt="`${item.title} thumbnail`" class="gallery-image" @error="handleFallbackError" />
+              :alt="`${item.title} thumbnail`" class="gallery-image" 
+              @load="fallbackLoaded = true" @error="handleFallbackError" />
           </TransitionGroup>
 
           <button v-if="!isChecking && validImages.length > 1" class="carousel-btn next" @click="nextImage"
@@ -93,16 +96,25 @@ const emit = defineEmits(['close']);
 const currentImageIndex = ref(0);
 const slideDirection = ref('slide-right');
 const isChecking = ref(true);
+const fallbackLoaded = ref(false);
 
 const imageSources = ref(
   Array.from({ length: 5 }, (_, i) => ({
     id: i,
     url: `${import.meta.env.BASE_URL}projects/${props.item.name}/${i + 1}.png`,
-    failed: false
+    failed: false,
+    loaded: false
   }))
 );
 
 const validImages = computed(() => imageSources.value.filter(img => !img.failed));
+
+const isLoadingCurrent = computed(() => {
+  if (isChecking.value) return true;
+  if (validImages.value.length === 0) return !fallbackLoaded.value;
+  const currentImg = validImages.value[currentImageIndex.value];
+  return currentImg ? !currentImg.loaded : false;
+});
 
 const checkImages = async () => {
   const promises = imageSources.value.map(async (img) => {
@@ -260,6 +272,13 @@ const handleFallbackError = (e) => {
   border-radius: 8px;
   overflow: hidden;
   height: 100%;
+}
+
+.skeleton-fill {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 5;
+  border-radius: 8px;
 }
 
 /* Carousel styles */

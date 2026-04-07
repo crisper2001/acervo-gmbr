@@ -238,6 +238,17 @@ body {
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgba(130, 130, 130, 0.1) 25%, rgba(130, 130, 130, 0.2) 50%, rgba(130, 130, 130, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
 </style>
 
 <style scoped>
