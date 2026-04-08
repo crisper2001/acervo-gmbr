@@ -47,7 +47,7 @@
           class="top-pagination"
         />
 
-        <div class="items-grid">
+        <div class="items-grid" ref="itemsGrid">
           <ItemCard 
             v-for="item in paginatedItems" 
             :key="item.id" 
@@ -57,10 +57,6 @@
             @search-year="setSearchQuery"
             @open="selectedItem = $event"
           />
-          <div v-for="n in (itemsPerPage - paginatedItems.length)" :key="'placeholder-' + n" class="item-placeholder" aria-hidden="true">
-            <div class="placeholder-thumb"></div>
-            <div class="placeholder-info"></div>
-          </div>
         </div>
       </template>
 
@@ -110,6 +106,7 @@ const theme = ref(localStorage.getItem('theme') || 'light');
 const currentPage = ref(1);
 const selectedItem = ref(null);
 const itemsPerPage = 30;
+const itemsGrid = ref(null);
 
 const { t, locale } = useI18n();
 
@@ -131,9 +128,22 @@ const setSearchQuery = (query) => {
   searchQuery.value = query;
 };
 
+let scrollTimeout;
 const setPage = (page) => {
+  if (itemsGrid.value) {
+    // Temporarily lock the height to prevent scrolling jumps on pages with fewer items
+    itemsGrid.value.style.minHeight = `${itemsGrid.value.offsetHeight}px`;
+  }
+
   currentPage.value = page;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    if (itemsGrid.value) {
+      itemsGrid.value.style.minHeight = '';
+    }
+  }, 800); // 800ms is generally enough time for the smooth scroll to finish
 };
 
 watch([searchQuery, sortBy], () => {
@@ -316,23 +326,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 2rem;
-}
-
-.item-placeholder {
-  visibility: hidden;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-}
-
-.placeholder-thumb {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-}
-
-.placeholder-info {
-  padding: 1rem;
-  min-height: 140px; /* Approximates the height of the item info block */
+  align-content: start;
 }
 
 .search-container {
