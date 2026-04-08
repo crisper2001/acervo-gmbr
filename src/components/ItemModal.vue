@@ -16,10 +16,10 @@
             <img v-for="(img, index) in imageSources" :key="img.id"
               v-show="!img.failed && validImages.indexOf(img) === currentImageIndex" :src="img.url" loading="lazy"
               :alt="`${item.title} screenshot ${index + 1}`" :class="['gallery-image', { 'img-loaded': img.loaded }]"
-              @load="img.loaded = true" @error="handleGalleryError(index, $event)" />
+              @load="img.loaded = true" @error="handleGalleryError(index, $event)" @click="isLightboxOpen = true" />
             <img v-if="!isChecking && validImages.length === 0" key="fallback-thumbnail" :src="item.thumbnail"
               :alt="`${item.title} thumbnail`" :class="['gallery-image', { 'img-loaded': fallbackLoaded }]" 
-              @load="fallbackLoaded = true" @error="handleFallbackError" />
+              @load="fallbackLoaded = true" @error="handleFallbackError" @click="isLightboxOpen = true" />
           </TransitionGroup>
 
           <button v-if="!isChecking && validImages.length > 1" class="carousel-btn next" @click="nextImage"
@@ -73,12 +73,20 @@
         </div>
       </div>
     </div>
+
+    <Lightbox 
+      v-if="isLightboxOpen" 
+      :images="validImages.length ? validImages : [{ url: item.thumbnail }]" 
+      :initial-index="validImages.length ? currentImageIndex : 0" 
+      @close="isLightboxOpen = false" 
+    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
+import Lightbox from './Lightbox.vue';
 
 const props = defineProps({
   item: {
@@ -97,6 +105,7 @@ const currentImageIndex = ref(0);
 const slideDirection = ref('slide-right');
 const isChecking = ref(true);
 const fallbackLoaded = ref(false);
+const isLightboxOpen = ref(false);
 
 const imageSources = ref(
   Array.from({ length: 5 }, (_, i) => ({
@@ -165,6 +174,7 @@ const goToImage = (index) => {
 };
 
 const handleKeyDown = (e) => {
+  if (isLightboxOpen.value) return; // Defer keyboard events to the Lightbox when open
   if (e.key === 'Escape') {
     emit('close');
   } else if (e.key === 'ArrowRight') {
@@ -224,15 +234,15 @@ const handleFallbackError = (e) => {
 
 .modal-content {
   background: var(--card-bg, #2a2a2a);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: 16px;
+  padding: 0;
   width: 900px;
   height: 600px;
   max-width: 95vw;
   max-height: 95vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
   color: var(--text-main, #ffffff);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
@@ -241,23 +251,29 @@ const handleFallbackError = (e) => {
 .close-btn {
   position: absolute;
   top: 15px;
-  right: 20px;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: var(--text-muted);
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  font-size: 1.25rem;
+  color: var(--text-main);
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn:hover {
-  color: var(--text-main);
+  background: var(--border-color);
 }
 
 .modal-body {
   display: flex;
-  gap: 2rem;
-  margin-top: 1rem;
+  gap: 0;
   flex: 1;
   min-height: 0;
 }
@@ -268,8 +284,7 @@ const handleFallbackError = (e) => {
   align-items: center;
   justify-content: center;
   position: relative;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  background: #000;
   overflow: hidden;
   height: 100%;
 }
@@ -296,6 +311,7 @@ const handleFallbackError = (e) => {
   max-height: 100%;
   object-fit: contain;
   color: transparent;
+  cursor: zoom-in;
 }
 
 .gallery-image:not(.img-loaded) {
@@ -377,9 +393,9 @@ const handleFallbackError = (e) => {
 }
 
 .indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 24px;
+  height: 4px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   transition: background 0.2s;
@@ -393,6 +409,8 @@ const handleFallbackError = (e) => {
   display: flex;
   flex-direction: column;
   flex: 1;
+  padding: 2.5rem;
+  overflow-y: auto;
 }
 
 .modal-header {
@@ -494,7 +512,7 @@ const handleFallbackError = (e) => {
   padding: 0.8rem 1.5rem;
   text-decoration: none;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: background-color 0.2s ease;
   font-size: 1.1rem;
 }
@@ -525,7 +543,7 @@ const handleFallbackError = (e) => {
   padding: calc(0.8rem - 1px) 1.5rem;
   text-decoration: none;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.2s ease;
   font-size: 1.1rem;
 }

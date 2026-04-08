@@ -81,7 +81,7 @@ const visiblePages = computed(() => {
   min-width: 2.5rem;
   height: 2.5rem;
   padding: 0 0.5rem;
-  border-radius: 6px;
+  border-radius: 50%;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;

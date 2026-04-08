@@ -13,11 +13,11 @@
   "author": "Author",
   "year": "Year",
   "forumLink": "Forum Topic",
-  "footerDisclaimer": "This site was created with the help of generative AI.",
   "projectsFound": "No items found | 1 item found | {count} items found",
   "tag": "Tag",
   "project": "Project",
   "engine": "Engine",
   "themeDark": "Dark",
-  "themeLight": "Light"
+  "themeLight": "Light",
+  "createdBy": "Created by"
 }

@@ -78,11 +78,17 @@
     </Transition>
 
     <footer class="footer">
-      <small>
-        <p>Super Games</p>
-        <p>2026</p>
-      </small>      
-      <p><small>{{ t('footerDisclaimer') }}</small></p>
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h2>Acervo GMBR</h2>
+          <p>
+            {{ t('createdBy') }} <a href="https://gmbr.forumeiros.com/u2341" target="_blank" rel="noopener noreferrer">Super Games</a>
+          </p>
+        </div>
+        <div class="footer-links">
+          <a href="https://gmbr.forumeiros.com/" target="_blank" rel="noopener noreferrer">GMBR</a>
+        </div>
+      </div>
     </footer>
   </div>
 </template>
@@ -231,7 +237,7 @@ onMounted(async () => {
   --text-main: #1a1a1a;
   --text-muted: #666666;
   --card-bg: #ffffff;
-  --border-color: #cccccc;
+  --border-color: #e0e0e0;
   --input-bg: #ffffff;
   --accent-color: #42b883;
   --accent-hover: #33a06f;
@@ -241,7 +247,7 @@ onMounted(async () => {
   --bg-color: #121212;
   --text-main: #ffffff;
   --text-muted: #b3b3b3;
-  --card-bg: #2a2a2a;
+  --card-bg: #1e1e1e;
   --border-color: #444444;
   --input-bg: #2a2a2a;
 }
@@ -269,6 +275,14 @@ body {
 .app-container {
   padding: 2rem;
   font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+main {
+  flex: 1;
 }
 
 .controls {
@@ -281,7 +295,7 @@ body {
   color: var(--text-main);
   border: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
   transition: all 0.2s ease;
@@ -298,9 +312,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin: -2rem -2rem 2rem -2rem;
+  padding: 1.5rem 2rem;
   gap: 1rem;
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-left {
@@ -340,7 +360,7 @@ body {
 
 .sort-select {
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: 20px;
   border: 1px solid var(--border-color);
   background-color: var(--input-bg);
   color: var(--text-main);
@@ -369,10 +389,88 @@ body {
 }
 
 .footer {
-  margin-top: 4rem;
-  text-align: center;
-  color: var(--text-muted);
-  padding-top: 2rem;
+  margin: 4rem -2rem -2rem -2rem;
+  padding: 3rem 2rem;
   border-top: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footer-brand h2 {
+  margin: 0;
+  color: var(--accent-color);
+  font-size: 1.5rem;
+}
+
+.footer-brand p {
+  margin: 0.25rem 0 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.footer-brand p a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.footer-brand p a:hover {
+  color: var(--accent-color);
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent-color);
+}
+
+/* Modal transitions */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .modal-content,
+.modal-leave-active .modal-content {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-enter-from .modal-content,
+.modal-leave-to .modal-content {
+  transform: scale(0.9);
+}
+
+@media (max-width: 650px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+  }
 }
 </style>

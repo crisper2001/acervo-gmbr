@@ -13,11 +13,11 @@
   "author": "Autor",
   "year": "Ano",
   "forumLink": "Tópico no Fórum",
-  "footerDisclaimer": "Este site foi criado com a ajuda de IA generativa.",
   "projectsFound": "Nenhum item encontrado | 1 item encontrado | {count} itens encontrados",
   "tag": "Tag",
   "project": "Projeto",
   "engine": "Engine",
   "themeDark": "Escuro",
-  "themeLight": "Claro"
+  "themeLight": "Claro",
+  "createdBy": "Criado por"
 }
