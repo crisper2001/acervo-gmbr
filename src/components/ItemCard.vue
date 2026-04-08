@@ -74,16 +74,16 @@ const handleImageError = (e) => {
   display: flex;
   flex-direction: column;
   background: var(--card-bg, #2a2a2a);
+  border: 3px solid transparent;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
   color: var(--text-main, #ffffff);
   cursor: pointer;
 }
 
 .item-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--accent-color, #42b883);
 }
 
 .thumbnail-wrapper {
