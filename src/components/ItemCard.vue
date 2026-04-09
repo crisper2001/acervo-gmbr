@@ -3,13 +3,13 @@
     <div class="thumbnail-wrapper">
       <div v-if="!isLoaded" class="skeleton skeleton-overlay"></div>
       <img :src="item.thumbnail" :alt="item.title" :class="['thumbnail', { 'img-loaded': isLoaded }]" @load="isLoaded = true" @error="handleImageError" loading="lazy" />
-      <span :class="['grade', item.grade ? `grade-${item.grade.toLowerCase()}` : 'grade-na']">
-        {{ item.grade || 'N/A' }}
-      </span>
     </div>
     <div class="info">
       <div class="header">
         <h3 class="title" :title="item.title">{{ item.title }}</h3>
+        <div v-if="item.grade" class="grade-badge">
+          <img :src="getGradeImage(item.grade)" :alt="`Grade ${item.grade}`" class="grade-img" />
+        </div>
       </div>
       <div class="meta">
         <div class="meta-row">
@@ -66,6 +66,11 @@ const handleImageError = (e) => {
   } else if (src.endsWith('.jpg')) {
     e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"%3E%3Crect fill="%23333" width="240" height="240"/%3E%3Ctext fill="%23888" font-family="sans-serif" font-size="16" dy="8" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
   }
+};
+
+const getGradeImage = (grade) => {
+  const gradeName = grade ? grade.toLowerCase() : 'na';
+  return `${import.meta.env.BASE_URL}grades/${gradeName}.png`;
 };
 </script>
 
@@ -126,55 +131,28 @@ const handleImageError = (e) => {
 
 .title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
+  flex: 1;
 }
 
-.grade {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 900;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  z-index: 10;
+.grade-badge {
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.grade-a {
-  background-color: #4CAF50;
-  color: white;
-}
+.grade-img {
+  width: 13px;
+  height: 19px;
+  object-fit: contain;
 
-.grade-b {
-  background-color: #2196F3;
-  color: white;
-}
-
-.grade-c {
-  background-color: #FFEB3B;
-  color: black;
-}
-
-.grade-d {
-  background-color: #FF9800;
-  color: white;
-}
-
-.grade-e {
-  background-color: #F44336;
-  color: white;
-}
-
-.grade-na {
-  background-color: #9e9e9e;
-  color: white;
 }
 
 .meta {

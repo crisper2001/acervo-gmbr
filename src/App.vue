@@ -50,7 +50,7 @@
         <div class="items-grid" ref="itemsGrid">
           <ItemCard 
             v-for="item in paginatedItems" 
-            :key="item.id" 
+            :key="item.name" 
             :item="item" 
             :labels="{ playNow: t('playNow'), unavailable: t('downloadUnavailable'), project: t('project'), engine: t('engine') }"
             @search-author="setSearchQuery"
@@ -86,7 +86,9 @@
           </p>
         </div>
         <div class="footer-links">
-          <a href="https://gmbr.forumeiros.com/" target="_blank" rel="noopener noreferrer">GMBR</a>
+          <a href="https://gmbr.forumeiros.com/" target="_blank" rel="noopener noreferrer">
+            <img src="/gmbr.png" alt="GMBR Logo" width="256" class="footer-logo">
+          </a>
         </div>
       </div>
     </footer>
@@ -215,7 +217,7 @@ onMounted(async () => {
     items.value = itemsData.map(item => {
       const title = item.title || item.displayed_name;
       const name = item.name || 
-        title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + item.id;
+        title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         
       const { thumbnail, displayed_name, ...rest } = item;
       

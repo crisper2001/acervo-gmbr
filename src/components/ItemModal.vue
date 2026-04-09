@@ -13,7 +13,7 @@
           </button>
 
           <TransitionGroup :name="slideDirection" tag="div" class="carousel-container">
-            <img v-for="(img, index) in imageSources" :key="img.id"
+            <img v-for="(img, index) in imageSources" :key="img.url"
               v-show="!img.failed && validImages.indexOf(img) === currentImageIndex" :src="img.url" loading="lazy"
               :alt="`${item.title} screenshot ${index + 1}`" :class="['gallery-image', { 'img-loaded': img.loaded }]"
               @load="img.loaded = true" @error="handleGalleryError(index, $event)" @click="isLightboxOpen = true" />
@@ -35,9 +35,9 @@
         <div class="modal-info">
           <div class="modal-header">
             <h2>{{ item.title }}</h2>
-            <span :class="['grade', item.grade ? `grade-${item.grade.toLowerCase()}` : 'grade-na']">
-              {{ item.grade || 'N/A' }}
-            </span>
+            <div v-if="item.grade" class="grade-badge">
+              <img :src="getGradeImage(item.grade)" :alt="`Grade ${item.grade}`" class="grade-img" />
+            </div>
           </div>
 
           <div class="modal-meta">
@@ -109,7 +109,6 @@ const isLightboxOpen = ref(false);
 
 const imageSources = ref(
   Array.from({ length: 5 }, (_, i) => ({
-    id: i,
     url: `${import.meta.env.BASE_URL}projects/${props.item.name}/${i + 1}.png`,
     failed: false,
     loaded: false
@@ -213,6 +212,11 @@ const handleFallbackError = (e) => {
   } else if (src.endsWith('.jpg')) {
     e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240"%3E%3Crect fill="%23333" width="240" height="240"/%3E%3Ctext fill="%23888" font-family="sans-serif" font-size="16" dy="8" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
   }
+};
+
+const getGradeImage = (grade) => {
+  const gradeName = grade ? grade.toLowerCase() : 'na';
+  return `${import.meta.env.BASE_URL}grades/${gradeName}.png`;
 };
 </script>
 
@@ -425,43 +429,19 @@ const handleFallbackError = (e) => {
   font-size: 1.6rem;
 }
 
-.grade {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: bold;
+.grade-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
   flex-shrink: 0;
 }
 
-.grade-a {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.grade-b {
-  background-color: #2196F3;
-  color: white;
-}
-
-.grade-c {
-  background-color: #FFEB3B;
-  color: black;
-}
-
-.grade-d {
-  background-color: #FF9800;
-  color: white;
-}
-
-.grade-e {
-  background-color: #F44336;
-  color: white;
-}
-
-.grade-na {
-  background-color: #9e9e9e;
-  color: white;
+.grade-img {
+  width: 13px;
+  height: 19px;
+  object-fit: contain;
 }
 
 .modal-meta {
