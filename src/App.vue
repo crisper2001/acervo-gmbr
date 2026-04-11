@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Icon } from '@iconify/vue';
 import ItemCard from './components/ItemCard.vue';
@@ -154,8 +154,12 @@ const setPage = (page) => {
   }, 800); // 800ms is generally enough time for the smooth scroll to finish
 };
 
+let isPopStateSyncing = false;
+
 watch([searchQuery, sortBy], () => {
-  currentPage.value = 1;
+  if (!isPopStateSyncing) {
+    currentPage.value = 1;
+  }
 });
 
 const filteredItems = computed(() => {
@@ -212,7 +216,68 @@ const paginatedItems = computed(() => {
   return filteredItems.value.slice(start, end);
 });
 
+watch([searchQuery, sortBy, currentPage, selectedItem], (newVals, oldVals) => {
+  if (isPopStateSyncing) return;
+
+  const [newQ, newSort, newP, newItem] = newVals;
+  const [oldQ, oldSort, oldP, oldItem] = oldVals || [];
+
+  const url = new URL(window.location);
+  
+  if (newQ) url.searchParams.set('q', newQ);
+  else url.searchParams.delete('q');
+
+  if (newSort && newSort !== 'grade-asc') url.searchParams.set('sort', newSort);
+  else url.searchParams.delete('sort');
+
+  if (newP > 1) url.searchParams.set('p', newP);
+  else url.searchParams.delete('p');
+
+  if (newItem) url.searchParams.set('item', newItem.name);
+  else url.searchParams.delete('item');
+
+  if (url.href !== window.location.href) {
+    const isItemChanged = (newItem?.name) !== (oldItem?.name);
+    const isPageChanged = newP !== oldP;
+    const isSearchChanged = newQ !== oldQ;
+    const isSortChanged = newSort !== oldSort;
+    
+    // If navigating pages, changing sort, or toggling a modal, add a new history entry.
+    // If simply typing a search query, replace the current history entry to prevent bloat.
+    if (isItemChanged || ((isPageChanged || isSortChanged) && !isSearchChanged)) {
+      window.history.pushState({ item: newItem?.name }, '', url);
+    } else {
+      window.history.replaceState({ item: newItem?.name }, '', url);
+    }
+  }
+});
+
+const handlePopState = () => {
+  isPopStateSyncing = true;
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  searchQuery.value = urlParams.get('q') || '';
+  sortBy.value = urlParams.get('sort') || 'grade-asc';
+  
+  const p = parseInt(urlParams.get('p'), 10);
+  currentPage.value = isNaN(p) ? 1 : p;
+
+  const itemName = urlParams.get('item');
+  if (itemName) {
+    const foundItem = items.value.find(i => i.name === itemName);
+    selectedItem.value = foundItem || null;
+  } else {
+    selectedItem.value = null;
+  }
+
+  nextTick(() => {
+    isPopStateSyncing = false;
+  });
+};
+
 onMounted(async () => {
+  window.addEventListener('popstate', handlePopState);
+
   setTimeout(() => {
     items.value = itemsData.map(item => {
       const title = item.title || item.displayed_name;
@@ -229,7 +294,13 @@ onMounted(async () => {
       };
     });
     loading.value = false;
+    
+    handlePopState();
   }, 800);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('popstate', handlePopState);
 });
 </script>
 
